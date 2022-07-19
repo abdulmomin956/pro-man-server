@@ -1,0 +1,27 @@
+{
+  "name": "pro-man-server",
+  "version": "1.0.0",
+  "description": "1. Before task: git pull origin main\r 2. After task done: git checkout -b your-branch-name\r 3. git add .\r 4. git commit -m\"your message\"\r 5. git push origin your-branch-name",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start-dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdulmomin956/pro-man-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdulmomin956/pro-man-server/issues"
+  },
+  "homepage": "https://github.com/abdulmomin956/pro-man-server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1"
+  }
+}
