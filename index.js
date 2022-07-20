@@ -123,6 +123,7 @@ async function run() {
             const result = await cardCollection.insertOne(cardData);
             res.send(result);
         })
+        // card update api
         app.put('/card/:task', async (req, res) => {
             // console.log(req.body);
             const taskData=await cardCollection.updateOne(
