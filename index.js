@@ -7,14 +7,13 @@ const jwt = require('jsonwebtoken');
 const app = express()
 const port = process.env.PORT || 5000;
 
-app.use(express.json())
+app.use(express.json());
 app.use(cors())
 
-
-
-
+// <<<<<<< HEAD
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
+// console.log(uri);
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
@@ -25,6 +24,7 @@ async function run() {
         const userCollection = client.db("pro-man").collection("user");
         const workspaceCollection = client.db("pro-man").collection("workspace");
         const boardCollection = client.db("pro-man").collection("board");
+        const cardCollection = client.db("pro-man").collection("card");
 
 
         //registration api
@@ -107,6 +107,45 @@ async function run() {
         })
         app.delete('/board/:id', async (req, res) => {
             res.send({ message: "need api update" })
+        })
+
+
+        // cards
+         
+         app.get('/card', async (req, res) => {
+            const result = await cardCollection.find({}).toArray();
+            res.send(result)
+        })
+        app.post('/card', async (req, res) => {
+         
+            const cardData = req.body;  
+            console.log(cardData);
+            const result = await cardCollection.insertOne(cardData);
+            res.send(result);
+        })
+        // card update api
+        app.put('/card/:task', async (req, res) => {
+            // console.log(req.body);
+            const taskData=await cardCollection.updateOne(
+                {task:req.params.task},
+                { $set:req.body }
+                )
+                res.send({status:"updated"})
+        })
+        app.delete('/card/:id', async (req, res) => {
+           try{
+            const deleteCard=await cardCollection.findOneAndDelete(req.params.id);
+            // console.log(deleteCard)
+            if(!req.params.id){
+                return res.status(400).send();
+
+            }
+            res.send(deleteCard)
+           }
+           catch(e){
+            res.status(500).send(e);
+
+           }
         })
 
         //for mongodb check
