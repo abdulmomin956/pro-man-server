@@ -7,10 +7,10 @@ const addWorkspace = async (req, res) => {
     try {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
-        const data = req.body;
-        const result = await workspaceCollection.insertOne(data);
+        const { title, type, description, email } = req.body;
+        if (!title || !type || !email) return res.sendStatus(401);
+        const result = await workspaceCollection.insertOne({ title, type, description, email });
         res.send(result);
-
     }
     catch (err) {
         console.error(err);
@@ -27,7 +27,6 @@ const getWorkspaces = async (req, res) => {
         const workspaceCollection = client.db("pro-man").collection("workspace");
         const result = await workspaceCollection.find({}).toArray()
         res.send(result)
-
     }
     catch (err) {
         console.error(err);
