@@ -4,8 +4,10 @@ const workspaceController = require('../controllers/workspaceController')
 
 
 router.route('/')
-    .get(workspaceController.getWorkspaces)
     .post(workspaceController.addWorkspace)
+
+router.route('/:email')
+    .get(workspaceController.getWorkspaces)
 
 
 
