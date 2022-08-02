@@ -3,12 +3,12 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
-const addWorkspace = async (req, res) => {
+const addCard = async (req, res) => {
     try {
         await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
+        const cardCollection = client.db("pro-man").collection("card");
         const data = req.body;
-        const result = await workspaceCollection.insertOne(data);
+        const result = await cardCollection.insertOne(data);
         res.send(result);
 
     }
@@ -21,11 +21,11 @@ const addWorkspace = async (req, res) => {
 }
 
 
-const getWorkspaces = async (req, res) => {
+const getCards = async (req, res) => {
     try {
         await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
-        const result = await workspaceCollection.find({}).toArray()
+        const cardCollection = client.db("pro-man").collection("card");
+        const result = await cardCollection.find({}).toArray()
         res.send(result)
 
     }
@@ -36,13 +36,13 @@ const getWorkspaces = async (req, res) => {
         // await client.close();
     }
 }
-const getWorkspace = async (req, res) => {
+const getCard = async (req, res) => {
     try {
         await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
+        const cardCollection = client.db("pro-man").collection("card");
         const id = req.params.id;
         const filter = { _id: ObjectId(id) }
-        const result = await workspaceCollection.findOne(filter)
+        const result = await cardCollection.findOne(filter)
         res.send(result)
 
     }
@@ -53,17 +53,17 @@ const getWorkspace = async (req, res) => {
         // await client.close();
     }
 }
-const updateWorkspace = async (req, res) => {
+const updateCard = async (req, res) => {
     try {
         await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
+        const cardCollection = client.db("pro-man").collection("card");
         const id = req.params.id;
         const document = req.body;
         const filter = { _id: ObjectId(id) }
         const upDoc = {
             $set: document
         }
-        const result = await workspaceCollection.updateOne(filter, upDoc)
+        const result = await cardCollection.updateOne(filter, upDoc)
         res.send(result)
 
     }
@@ -74,14 +74,14 @@ const updateWorkspace = async (req, res) => {
         // await client.close();
     }
 }
-const deleteWorkspace = async (req, res) => {
+const deleteCard = async (req, res) => {
     try {
         await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
+        const cardCollection = client.db("pro-man").collection("card");
         const id = req.params.id;
         console.log(id)
         const filter = { _id: ObjectId(id) }
-        const result = await workspaceCollection.deleteOne(filter)
+        const result = await cardCollection.deleteOne(filter)
         res.send(result)
 
     }
@@ -94,4 +94,4 @@ const deleteWorkspace = async (req, res) => {
 }
 
 
-module.exports = { addWorkspace, getWorkspaces, getWorkspace, updateWorkspace, deleteWorkspace }
+module.exports = { addCard, getCards, getCard, updateCard, deleteCard }
