@@ -21,79 +21,14 @@ async function run() {
     try {
 
         await client.connect()
-        const userCollection = client.db("pro-man").collection("user");
-        const workspaceCollection = client.db("pro-man").collection("workspace");
         const boardCollection = client.db("pro-man").collection("board");
         const cardCollection = client.db("pro-man").collection("card");
 
 
-        //registration api
-        app.put('/api/reg', async (req, res) => {
-            const { email } = req.body;
-            if (!email) return res.status(400).json({ 'message': 'Email is required.' });
-            // console.log(email);
-            try {
-                const filter = { email: email };
-                const options = { upsert: true };
-                const result = await userCollection.updateOne(filter, { $set: { email: email } }, options)
-                if (result.matchedCount === 1) {
-                    return res.status(409).json({ 'message': 'This email is already exited' });
-                }
-                else {
-                    res.status(201).json(result);
-                }
-            }
-            catch (err) {
-                res.status(500).json({ 'message': err.message });
-            }
-        })
-
-        //login api
-        app.post('/api/login', async (req, res) => {
-            const { email } = req.body;
-            if (!email) return res.status(400).json({ 'message': 'Email is required.' });
-            // console.log(email);
-            try {
-                const usersDB = await userCollection.find({}).toArray();
-                const foundUser = usersDB.find(person => person.email === email);
-
-                if (!foundUser) return res.sendStatus(401); //Unauthorized
-
-                // create JWTs
-                const accessToken = jwt.sign(
-                    { "username": foundUser.username },
-                    process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: '30s' }
-                );
-                const refreshToken = jwt.sign(
-                    { "username": foundUser.username },
-                    process.env.REFRESH_TOKEN_SECRET,
-                    { expiresIn: '1d' }
-                );
-
-                userCollection.updateOne({ email: email }, { $set: { refreshToken: refreshToken } })
-                res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-                res.json({ accessToken });
-            }
-            catch {
-                res.sendStatus(401);
-            }
-        })
 
 
-        //workspace
-        app.get('/workspace', async (req, res) => {
-            res.send({ message: "need api update" })
-        })
-        app.post('/workspace', async (req, res) => {
-            res.send({ message: "need api update" })
-        })
-        app.patch('/workspace', async (req, res) => {
-            res.send({ message: "need api update" })
-        })
-        app.delete('/workspace/:id', async (req, res) => {
-            res.send({ message: "need api update" })
-        })
+
+
 
         // board
         app.get('/board', async (req, res) => {
@@ -111,14 +46,14 @@ async function run() {
 
 
         // cards
-         
-         app.get('/card', async (req, res) => {
+
+        app.get('/card', async (req, res) => {
             const result = await cardCollection.find({}).toArray();
             res.send(result)
         })
         app.post('/card', async (req, res) => {
-         
-            const cardData = req.body;  
+
+            const cardData = req.body;
             console.log(cardData);
             const result = await cardCollection.insertOne(cardData);
             res.send(result);
@@ -126,33 +61,29 @@ async function run() {
         // card update api
         app.put('/card/:task', async (req, res) => {
             // console.log(req.body);
-            const taskData=await cardCollection.updateOne(
-                {task:req.params.task},
-                { $set:req.body }
-                )
-                res.send({status:"updated"})
+            const taskData = await cardCollection.updateOne(
+                { task: req.params.task },
+                { $set: req.body }
+            )
+            res.send({ status: "updated" })
         })
         app.delete('/card/:id', async (req, res) => {
-           try{
-            const deleteCard=await cardCollection.findOneAndDelete(req.params.id);
-            // console.log(deleteCard)
-            if(!req.params.id){
-                return res.status(400).send();
+            try {
+                const deleteCard = await cardCollection.findOneAndDelete(req.params.id);
+                // console.log(deleteCard)
+                if (!req.params.id) {
+                    return res.status(400).send();
+
+                }
+                res.send(deleteCard)
+            }
+            catch (e) {
+                res.status(500).send(e);
 
             }
-            res.send(deleteCard)
-           }
-           catch(e){
-            res.status(500).send(e);
-
-           }
         })
 
-        //for mongodb check
-        app.get('/users', async (req, res) => {
-            const result = await userCollection.find({}).toArray();
-            res.send(result)
-        })
+
 
     }
     finally {
@@ -162,10 +93,15 @@ async function run() {
 
 run().catch(console.dir)
 
-app.get('/', (req, res) => {
-    res.send({ message: 'success' })
-})
+//all routes
+app.use('/', require('./routes/root'))
+app.use('/mongodb', require('./routes/mongo'))
+app.use('/api/reg', require('./routes/register'))
+app.use('/api/login', require('./routes/login'))
+app.use('/users', require('./routes/users'))
 
+//workspace routes
+app.use('/workspace', require('./routes/workspaces'))
 
 app.listen(port, () => {
     console.log('running the server with port ' + port);
