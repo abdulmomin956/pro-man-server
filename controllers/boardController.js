@@ -22,12 +22,12 @@ const addBoard = async (req, res) => {
 
 
 const getBoards = async (req, res) => {
+    const { workspaceID } = req.params;
     try {
         await client.connect()
         const boardCollection = client.db("pro-man").collection("board");
-        const result = await boardCollection.find({}).toArray()
+        const result = await boardCollection.find({ workspaceID: workspaceID }).toArray()
         res.send(result)
-
     }
     catch (err) {
         console.error(err);

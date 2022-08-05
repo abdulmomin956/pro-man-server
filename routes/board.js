@@ -4,10 +4,10 @@ const boardController = require('../controllers/boardController')
 
 
 router.route('/')
-    .get(boardController.getBoards)
     .post(boardController.addBoard)
 
-
+router.route('/:workspaceID')
+    .get(boardController.getBoards)
 
 router.route('/:id')
     .get(boardController.getBoard)
