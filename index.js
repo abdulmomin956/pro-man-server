@@ -21,6 +21,7 @@ app.use('/users', require('./routes/users'))
 
 //workspace routes
 app.use('/workspace', require('./routes/workspaces'))
+app.use('/sworkspace', require('./routes/sworkspace'))
 
 // board routes
 app.use('/board', require('./routes/board'))

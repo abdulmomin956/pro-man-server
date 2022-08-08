@@ -23,6 +23,7 @@ const addWorkspace = async (req, res) => {
 
 const getWorkspaces = async (req, res) => {
     const { email } = req.params;
+    // console.log(email);
     if (!email) return res.sendStatus(401);
     try {
         await client.connect()
@@ -38,62 +39,7 @@ const getWorkspaces = async (req, res) => {
     }
 }
 
-const getWorkspace = async (req, res) => {
-    try {
-        await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
-        const id = req.params.id;
-        const filter = { _id: ObjectId(id) }
-        const result = await workspaceCollection.findOne(filter)
-        res.send(result)
-
-    }
-    catch (err) {
-        console.error(err);
-    }
-    finally {
-        // await client.close();
-    }
-}
-const updateWorkspace = async (req, res) => {
-    try {
-        await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
-        const id = req.params.id;
-        const document = req.body;
-        const filter = { _id: ObjectId(id) }
-        const upDoc = {
-            $set: document
-        }
-        const result = await workspaceCollection.updateOne(filter, upDoc)
-        res.send(result)
-
-    }
-    catch (err) {
-        console.error(err);
-    }
-    finally {
-        // await client.close();
-    }
-}
-const deleteWorkspace = async (req, res) => {
-    try {
-        await client.connect()
-        const workspaceCollection = client.db("pro-man").collection("workspace");
-        const id = req.params.id;
-        console.log(id)
-        const filter = { _id: ObjectId(id) }
-        const result = await workspaceCollection.deleteOne(filter)
-        res.send(result)
-
-    }
-    catch (err) {
-        console.error(err);
-    }
-    finally {
-        // await client.close();
-    }
-}
 
 
-module.exports = { addWorkspace, getWorkspaces, getWorkspace, updateWorkspace, deleteWorkspace }
+
+module.exports = { addWorkspace, getWorkspaces }

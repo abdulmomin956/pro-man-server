@@ -10,10 +10,4 @@ router.route('/:email')
     .get(workspaceController.getWorkspaces)
 
 
-
-router.route('/:id')
-    .get(workspaceController.getWorkspace)
-    .delete(workspaceController.deleteWorkspace)
-    .patch(workspaceController.updateWorkspace)
-
 module.exports = router;
