@@ -29,6 +29,9 @@ app.use('/board', require('./routes/board'))
 // card routes
 app.use('/card', require('./routes/card'))
 
+//user routes
+app.use('/users', require('./routes/users'))
+
 
 app.listen(port, () => {
     console.log('running the server with port ' + port);
