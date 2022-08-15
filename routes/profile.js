@@ -3,14 +3,14 @@ const router = express.Router();
 const profileController = require('../controllers/profileController')
 
 router.route('/')
-    .get(profileController.getCards)
+    .get(profileController.getProfiles)
     .post(profileController.addProfile)
 
 
 
 router.route('/:email')
     .get(profileController.getProfile)
-    .delete(profileController.updateCard)
+    .patch(profileController.updateProfile)
 
 
 module.exports = router;

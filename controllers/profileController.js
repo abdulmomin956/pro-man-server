@@ -1,3 +1,4 @@
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -18,14 +19,31 @@ const addProfile = async (req, res) => {
         // await client.close();
     }
 }
+const getProfiles = async (req, res) => {
+    try {
+        await client.connect()
+        const profileCollection = client.db("pro-man").collection("profile");
+        const result = await profileCollection.find({}).toArray();
+        res.send(result)
+
+    }
+    catch (err) {
+        console.error(err);
+    }
+    finally {
+        // await client.close();
+    }
+}
+
 
 
 const getProfile = async (req, res) => {
     try {
         await client.connect()
+       
         const profileCollection = client.db("pro-man").collection("profile");
-        const email = req.params.email;
-        const filter = { _id: ObjectId(id) }
+         const email = req.params.email;
+        const filter = { email: email };
         const result = await profileCollection.findOne(filter)
         res.send(result)
 
@@ -41,9 +59,9 @@ const updateProfile = async (req, res) => {
     try {
         await client.connect()
         const profileCollection = client.db("pro-man").collection("profile");
-        const id = req.params.id;
+        const email = req.params.email;
         const document = req.body;
-        const filter = { _id: ObjectId(id) }
+        const filter = { email: email };
         const upDoc = {
             $set: document
         }
@@ -58,26 +76,6 @@ const updateProfile = async (req, res) => {
         // await client.close();
     }
 }
-// const deleteCard = async (req, res) => {
-//     try {
-//         await client.connect()
-//         const profileCollection = client.db("pro-man").collection("profile");
-//         const id = req.params.id;
-//         console.log(id)
-//         const filter = { _id: ObjectId(id) }
-//         const result = await cardCollection.deleteOne(filter)
-//         res.send(result)
-
-//     }
-//     catch (err) {
-//         console.error(err);
-//     }
-//     finally {
-//         // await client.close();
-//     }
-// }
 
 
-module.exports = { addProfile, getProfile, updateProfile }
-
-
+module.exports = { addProfile, getProfiles, getProfile, updateProfile }
