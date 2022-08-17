@@ -30,6 +30,11 @@ app.use("/card", require("./routes/card"));
 // list routes
 app.use("/list", require("./routes/list"));
 
+//user routes
+app.use("/users", require("./routes/users"));
+// profile routes
+app.use("/profile", require("./routes/profile"));
+
 app.listen(port, () => {
   console.log("running the server with port " + port);
 });

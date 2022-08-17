@@ -8,7 +8,8 @@ const testMongo = async (req, res) => {
         await client.connect()
         res.send('mongo is running')
     } catch (err) {
-        res.send('err', err)
+        console.log(err);
+        res.status(400).json({ "message": err })
     }
 }
 

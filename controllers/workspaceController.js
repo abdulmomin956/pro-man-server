@@ -2,15 +2,50 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
-const addWorkspace = async (req, res) => {
+const generateShortName = async name => {
+    const str = name.replace(/\s/g, '').toLowerCase();
     try {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
-        const { title, type, description, email } = req.body;
-        if (!title || !type || !email) return res.sendStatus(401);
-        const result = await workspaceCollection.insertOne({ title, type, description, email });
+        const result = await workspaceCollection.find({}).project({ shortname: 1, _id: 0 }).toArray();
+        const filtered = result.filter(item => Object.hasOwn(item, 'shortname'))
+        // console.log(filtered);
+        const found = filtered.filter(element => element?.shortname?.includes(str))
+        if (found.length > 0) {
+            // console.log(found);
+            let num = found[found.length - 1]?.shortname?.match(/\d+/g);
+            // console.log(num);
+            if (num === null) {
+                return str + '1'
+            }
+            else {
+                return `${str}${parseInt(num[0]) + 1}`
+            }
+        }
+        else {
+            return str
+        }
+    }
+    catch (err) {
+        console.error(err);
+    }
+}
+
+const addWorkspace = async (req, res) => {
+    const { title, type, description, email } = req.body;
+    if (!title || !type || !email) return res.sendStatus(401);
+    const shortname = await generateShortName(title)
+    if (shortname === undefined || shortname === null) {
+        return res.sendStatus(401);
+    }
+    const data = { title, type, description, email, visibility: "private", shortname: shortname }
+    // console.log(data);
+    try {
+        await client.connect()
+        const workspaceCollection = client.db("pro-man").collection("workspace");
+        const result = await workspaceCollection.insertOne(data);
         res.send(result);
+        // res.send("result");
     }
     catch (err) {
         console.error(err);
