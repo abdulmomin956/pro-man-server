@@ -23,12 +23,17 @@ const getWorkspace = async (req, res) => {
     }
 }
 const updateWorkspace = async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) }
+    const document = req.body;
+    const { shortname } = document;
     try {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
-        const id = req.params.id;
-        const document = req.body;
-        const filter = { _id: ObjectId(id) }
+        const isUniqueShortname = await workspaceCollection.findOne({ shortname: shortname })
+        if (isUniqueShortname.length > 0) {
+            return res.sendStatus(409);
+        }
         const upDoc = {
             $set: document
         }
