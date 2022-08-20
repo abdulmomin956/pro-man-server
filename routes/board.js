@@ -9,7 +9,7 @@ router.route('/')
 router.route('/:workspaceID')
     .get(boardController.getBoards)
 
-router.route('/:id')
+router.route('/b/:id')
     .get(boardController.getBoard)
     .delete(boardController.deleteBoard)
     .patch(boardController.updateBoard)
