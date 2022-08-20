@@ -44,7 +44,6 @@ const getBoard = async (req, res) => {
         const filter = { _id: ObjectId(id) }
         const result = await boardCollection.findOne(filter)
         res.send(result)
-
     }
     catch (err) {
         console.error(err);

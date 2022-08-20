@@ -6,10 +6,10 @@ const boardController = require('../controllers/boardController')
 router.route('/')
     .post(boardController.addBoard)
 
-router.route('/:workspaceID')
+router.route('/w/:workspaceID')
     .get(boardController.getBoards)
 
-router.route('/:id')
+router.route('/b/:id')
     .get(boardController.getBoard)
     .delete(boardController.deleteBoard)
     .patch(boardController.updateBoard)
