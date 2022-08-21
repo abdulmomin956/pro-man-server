@@ -26,20 +26,23 @@ const updateWorkspace = async (req, res) => {
     const id = req.params.id;
     const filter = { _id: ObjectId(id) }
     const document = req.body;
-    const { newShortname } = document;
+    const { newShortname, title, type, website, description } = document;
     try {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
         const isUniqueShortname = await workspaceCollection.findOne({ shortname: newShortname })
-        if (isUniqueShortname.length > 0) {
+        // console.log(isUniqueShortname, Object.keys(isUniqueShortname).length);
+        if (isUniqueShortname && Object.keys(isUniqueShortname).length > 0) {
+            // console.log('yes');
             return res.sendStatus(409);
         }
         const upDoc = {
-            $set: document
+            $set: { title: title, type: type, shortname: newShortname, website: website, description: description }
         }
         const result = await workspaceCollection.updateOne(filter, upDoc)
         res.send(result)
-
+        // const check = await workspaceCollection.findOne(filter)
+        // console.log(check);
     }
     catch (err) {
         console.error(err);
