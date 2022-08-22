@@ -4,6 +4,11 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+const docs = {
+    document: {},
+    setDocument: function (data) { this.document = data }
+}
+
 const getWorkspace = async (req, res) => {
     const shortname = req.params.shortname;
     // console.log(id);
@@ -31,18 +36,24 @@ const updateWorkspace = async (req, res) => {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
         const isUniqueShortname = await workspaceCollection.findOne({ shortname: newShortname })
-        // console.log(isUniqueShortname, Object.keys(isUniqueShortname).length);
+        console.log(isUniqueShortname);
         if (isUniqueShortname && Object.keys(isUniqueShortname).length > 0) {
-            // console.log('yes');
+            console.log('yes');
             return res.sendStatus(409);
         }
+        if (!newShortname) {
+            docs.setDocument({ title: title, type: type, website: website, description: description })
+        }
+        else {
+            docs.setDocument({ title: title, type: type, shortname: newShortname, website: website, description: description })
+        }
+        // console.log(docs.document);
         const upDoc = {
-            $set: { title: title, type: type, shortname: newShortname, website: website, description: description }
+            $set: docs.document
         }
         const result = await workspaceCollection.updateOne(filter, upDoc)
         res.send(result)
-        // const check = await workspaceCollection.findOne(filter)
-        // console.log(check);
+
     }
     catch (err) {
         console.error(err);
