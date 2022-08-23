@@ -1,3 +1,4 @@
+
 // x = [
 //   { name: "sakib", friend: "mahmudul" },
 //   { name: "mahmudul", friend: "sakib" },
@@ -7,3 +8,4 @@
 // } else {
 //   console.log("not friend");
 // }
+
