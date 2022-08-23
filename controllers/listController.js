@@ -7,11 +7,13 @@ const client = new MongoClient(uri, {
 });
 
 const addList = async (req, res) => {
+  const { boardID } = req.params;
+  const list = req.body;
+  const data = { boardID: boardID, list: list }
   try {
     await client.connect();
     const listCollection = client.db("pro-man").collection("list");
-    const data = req.body;
-    const result = await listCollection.insertOne(data);
+    const result = await listCollection.updateOne({ boardID: boardID }, { $set: data }, { upsert: true });
     res.send(result);
   } catch (err) {
     console.error(err);
@@ -20,8 +22,9 @@ const addList = async (req, res) => {
   }
 };
 
-const getLists = async (req, res) => {
+const getAllLists = async (req, res) => {
   const { boardID } = req.params;
+  console.log(boardID);
   try {
     await client.connect();
     const listCollection = client.db("pro-man").collection("list");
@@ -34,20 +37,26 @@ const getLists = async (req, res) => {
   }
 };
 
-// const getList = async (req, res) => {
-//   try {
-//     await client.connect();
-//     const listCollection = client.db("pro-man").collection("board");
-//     const id = req.params.id;
-//     const filter = { _id: ObjectId(id) };
-//     const result = await listCollection.findOne(filter);
-//     res.send(result);
-//   } catch (err) {
-//     console.error(err);
-//   } finally {
-//     // await client.close();
-//   }
-// };
+const getLists = async (req, res) => {
+  const { boardID } = req.params;
+  console.log(boardID);
+  try {
+    await client.connect();
+    const listCollection = client.db("pro-man").collection("list");
+    const result = await listCollection.findOne({ boardID: boardID })
+    // console.log(result);
+    if (result === null) {
+      return res.send({ boardID: boardID, list: { lists: {}, listIds: [], } })
+    }
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    // await client.close();
+  }
+};
+
+
 
 const updateList = async (req, res) => {
   try {
@@ -68,6 +77,19 @@ const updateList = async (req, res) => {
   }
 };
 
+const deleteAllList = async (req, res) => {
+  const { boardID } = req.params;
+  try {
+    await client.connect();
+    const listCollection = client.db("pro-man").collection("list");
+    const result = await listCollection.deleteMany({ boardID: boardID });
+    res.send(result);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    // await client.close();
+  }
+};
 const deleteList = async (req, res) => {
   try {
     await client.connect();
@@ -84,4 +106,4 @@ const deleteList = async (req, res) => {
   }
 };
 
-module.exports = { addList, getLists, updateList, deleteList };
+module.exports = { addList, getAllLists, getLists, updateList, deleteAllList, deleteList };

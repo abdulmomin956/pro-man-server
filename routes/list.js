@@ -2,14 +2,18 @@ const express = require("express");
 const router = express.Router();
 const listController = require("../controllers/listController");
 
-router.route("/").post(listController.addList);
 
-router.route("/:boardID").get(listController.getLists);
 
-router
-  .route("/:id")
-  //   .get(listController.getList)
+router.route("/all/:boardID")
+  .get(listController.getAllLists)
+  .delete(listController.deleteAllList)
+
+router.route("/b/:boardID")
+  .get(listController.getLists)
+  .post(listController.addList)
+
+router.route("/l/:id")
   .delete(listController.deleteList)
-  .patch(listController.updateList);
+  .patch(listController.updateList)
 
 module.exports = router;
