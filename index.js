@@ -17,6 +17,7 @@ app.use("/", require("./routes/root"));
 app.use("/mongodb", require("./routes/mongo"));
 app.use("/api/reg", require("./routes/register"));
 app.use("/api/login", require("./routes/login"));
+app.use("/api/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
 
 //workspace routes
