@@ -7,6 +7,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 const handleLogin = async (req, res) => {
     const { email } = req.body;
+    console.log(email);
     if (!email) return res.status(400).json({ 'message': 'Email is required.' });
     // console.log(email);
     try {
@@ -22,17 +23,17 @@ const handleLogin = async (req, res) => {
         const accessToken = jwt.sign(
             { "email": usersDB[0].email },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '30s' }
+            { expiresIn: '1d' }
         );
         const refreshToken = jwt.sign(
             { "email": usersDB[0].email },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '2d' }
         );
 
-        await userCollection.updateOne({ email: email }, { $set: { refreshToken: refreshToken } })
-        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-        res.json({ accessToken });
+        // const result = await userCollection.updateOne({ email: email }, { $set: { refreshToken: refreshToken } })
+        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 2 * 24 * 60 * 60 * 1000 });
+        res.json({ accessToken, ttl: 24 * 60 * 60 * 1000 });
     }
     catch {
         res.sendStatus(401);
