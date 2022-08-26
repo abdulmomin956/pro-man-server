@@ -44,7 +44,6 @@ const getBoard = async (req, res) => {
         const filter = { _id: ObjectId(id) }
         const result = await boardCollection.findOne(filter)
         res.send(result)
-
     }
     catch (err) {
         console.error(err);
@@ -75,15 +74,14 @@ const updateBoard = async (req, res) => {
     }
 }
 const deleteBoard = async (req, res) => {
+    const id = req.params.id;
+    // console.log(id)
+    const filter = { _id: ObjectId(id) }
     try {
         await client.connect()
         const boardCollection = client.db("pro-man").collection("board");
-        const id = req.params.id;
-        console.log(id)
-        const filter = { _id: ObjectId(id) }
         const result = await boardCollection.deleteOne(filter)
         res.send(result)
-
     }
     catch (err) {
         console.error(err);

@@ -1,4 +1,5 @@
-x = [
+
+// x = [
 //   { name: "sakib", friend: "mahmudul" },
 //   { name: "mahmudul", friend: "sakib" },
 // ];
@@ -7,3 +8,4 @@ x = [
 // } else {
 //   console.log("not friend");
 // }
+
