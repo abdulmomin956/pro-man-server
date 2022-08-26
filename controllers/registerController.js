@@ -4,6 +4,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const jwt = require('jsonwebtoken');
 
 const handleRegister = async (req, res) => {
+    const data = req.body;
     const { email } = req.body;
     if (!email) return res.status(400).json({ 'message': 'Email is required.' });
     // console.log(email);
@@ -13,7 +14,7 @@ const handleRegister = async (req, res) => {
 
         const filter = { email: email };
         const options = { upsert: true };
-        const result = await userCollection.updateOne(filter, { $set: { email: email } }, options)
+        const result = await userCollection.updateOne(filter, { $set: data }, options)
 
         if (result.matchedCount === 1) {
             return res.status(409).json({ 'message': 'This email is already exited' });
