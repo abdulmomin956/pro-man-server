@@ -31,6 +31,8 @@ app.use('/card', require('./routes/card'))
 
 //user routes
 app.use('/users', require('./routes/users'))
+
+
 // profile routes
 app.use('/profile', require('./routes/profile'))
 

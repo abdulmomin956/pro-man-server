@@ -34,4 +34,25 @@ const addUser = async (req, res) => {
     }
 };
 
-module.exports = { getUsers, addUser };
+// update role to make admin   add jwt
+    const makeAdmin = async (req, res) => {
+      const id = req.params.id;
+      console.log(id)
+      const updatedItem = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          role: updatedItem.role,
+        },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send("done")
+      
+    };
+
+module.exports = { getUsers, addUser, makeAdmin };
