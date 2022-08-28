@@ -6,12 +6,33 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+const usePages = {
+  pages: 1,
+  setPages: function (data) { this.pages = data }
+}
+
 const getUsers = async (req, res) => {
+  const { page, limit } = req.query;
+  usePages.setPages(page)
   try {
     await client.connect();
     const userCollection = client.db("pro-man").collection("user");
-    const result = await userCollection.find({}).toArray();
-    res.send(result);
+    const data = await userCollection.find({}).toArray();
+    const totalItemsNumber = data.length;
+    const num_pages = Math.ceil(totalItemsNumber / limit);
+    if (usePages.pages > num_pages) {
+      usePages.setPages(num_pages)
+    }
+    const lowerLimit = usePages.pages * limit - limit;
+    const upperLimit = usePages.pages * limit;
+    const items = data.slice(lowerLimit, upperLimit)
+    res.send({
+      "list": items,
+      "num_pages": num_pages,
+      "page": parseInt(usePages.pages),
+      "limit": parseInt(limit)
+    }
+    )
   } catch (err) {
     console.error(err);
   } finally {
@@ -24,9 +45,9 @@ const addUser = async (req, res) => {
     await client.connect();
     const userCollection = client.db("pro-man").collection("user");
     const user = req.body;
-    console.log(user);
+    // console.log(user);
     const result = await userCollection.insertOne(user);
-    res.send(result);
+    // res.send(result);
   } catch (err) {
     console.error(err);
   } finally {
