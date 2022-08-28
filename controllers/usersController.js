@@ -40,6 +40,19 @@ const getUsers = async (req, res) => {
   }
 };
 
+const allUsers = async (req, res) => {
+  try {
+    await client.connect();
+    const userCollection = client.db("pro-man").collection("user");
+    const result = await userCollection.find({}).toArray();
+    res.send(result)
+  } catch (err) {
+    console.error(err);
+  } finally {
+    // await client.close();
+  }
+}
+
 const addUser = async (req, res) => {
   try {
     await client.connect();
@@ -85,4 +98,4 @@ const makeAdmin = async (req, res) => {
 
 };
 
-module.exports = { getUsers, addUser, makeAdmin };
+module.exports = { getUsers, allUsers, addUser, makeAdmin };
