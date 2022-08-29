@@ -25,10 +25,10 @@ const handleVerifyToken = async (req, res) => {
     if (err) {
       return res.status(403).send({ message: 'Forbidden access' });
     }
-    const email = decoded.email;
+    const { email, workspaceId } = decoded;
     // console.log("email => ", email, ", userEmail => ", userEmail);
     if (userEmail == email) {
-      // console.log(decoded);
+      console.log(decoded);
       res.send(decoded);
 
     } else {
@@ -40,30 +40,38 @@ const handleVerifyToken = async (req, res) => {
 
 
 
-
+const memberArray = {
+  members: null,
+  setMembers: function (data) {
+    this.members = data;
+  }
+};
 const handleUpdateMember = async (req, res) => {
   try {
     await client.connect()
     const workspaceCollection = client.db("pro-man").collection("workspace");
 
     const { workspaceId, email } = req.body;
-    const data = "test2@gmail.com";
-    const workspace = await workspaceCollection.find({ _id: ObjectId(workspaceId) }).toArray()
-    console.log(workspace.members);
-    const userArray = workspace.members;
-    const check = userArray?.find(e => e === data);
+    // console.log(email);
+    const workspace = await workspaceCollection.findOne({ _id: ObjectId(workspaceId) })
+    // console.log(workspace);
+    if (!workspace.members) {
+      memberArray.setMembers([])
+      // console.log(memberArray.members);
+    } else {
+      memberArray.setMembers(workspace.members);
+    }
+
+    const check = memberArray.members?.find(e => e === email);
     if (check) {
-      console.log("Check = true", check);
       return res.status(403).send({ message: 'Forbidden access' });
     } else {
-      userArray?.push(data);
-      console.log(userArray);
-      console.log("Check = false", check);
+      memberArray.members?.push(email);
 
       const option = { upsert: true };
       const filter = { _id: ObjectId(workspaceId) };
       const updateDoc = {
-        $set: { members: userArray },
+        $set: { members: memberArray.members },
       };
       const result = await workspaceCollection.updateOne(filter, updateDoc, option);
 
