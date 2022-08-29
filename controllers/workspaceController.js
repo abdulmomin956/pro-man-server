@@ -74,7 +74,42 @@ const getWorkspaces = async (req, res) => {
     }
 }
 
+// Find the workspaces where user as a member.
+const memberArray = {
+    members: [],
+    setMembers: function (data) {
+        this.members = data;
+    }
+};
+const getMembersWorkspaces = async (req, res) => {
+    const { memberEmail } = req.params;
+    try {
+        await client.connect()
+        const workspaceCollection = client.db("pro-man").collection("workspace");
+        console.log(memberEmail);
+        const result = await workspaceCollection.find().toArray()
+        if (result) {
+            result.map(user => {
+                const filter2 = user?.members?.find(e => {
+                    if (e === memberEmail) {
+                        // console.log(user);
+                        memberArray.members?.push(user);
+                    }
+                })
+            })
+        }
+        console.log(memberArray.members)
+        res.send("Run success....")
+    }
+    catch (err) {
+        console.error(err);
+    }
+    finally {
+        // await client.close();
+    }
+}
 
 
 
-module.exports = { addWorkspace, getWorkspaces }
+
+module.exports = { addWorkspace, getWorkspaces, getMembersWorkspaces }

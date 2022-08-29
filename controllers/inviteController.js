@@ -52,19 +52,19 @@ const handleUpdateMember = async (req, res) => {
     const workspaceCollection = client.db("pro-man").collection("workspace");
 
     const { workspaceId, email } = req.body;
-    // console.log(email);
+    console.log(workspaceId);
     const workspace = await workspaceCollection.findOne({ _id: ObjectId(workspaceId) })
-    // console.log(workspace);
-    if (!workspace.members) {
+    console.log(workspace);
+    if (!workspace?.members) {
       memberArray.setMembers([])
-      // console.log(memberArray.members);
+      console.log(memberArray.members);
     } else {
       memberArray.setMembers(workspace.members);
     }
 
     const check = memberArray.members?.find(e => e === email);
     if (check) {
-      return res.status(403).send({ message: 'Forbidden access' });
+      return res.status(409).send({ message: 'User already added.' });
     } else {
       memberArray.members?.push(email);
 
