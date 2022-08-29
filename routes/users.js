@@ -7,7 +7,7 @@ router.route("/all")
     .post(usersController.addUser)
 
 router.route("/pagination")
-    .get(usersController.getUsers)
+    .post(usersController.getUsers)
 
 router.route("/:id")
     .put(usersController.makeAdmin)

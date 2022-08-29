@@ -8,16 +8,39 @@ const client = new MongoClient(uri, {
 
 const usePages = {
   pages: 1,
-  setPages: function (data) { this.pages = data }
+  setPages: function (data) { this.pages = data },
+  filter: {},
+  setFilter: function (data) { this.filter = data }
 }
 
 const getUsers = async (req, res) => {
   const { page, limit } = req.query;
+  const { isAdmin, keyword } = req.body;
+  // console.log(isAdmin, keyword);
+  if ((isAdmin === "Admin") && keyword) {
+    usePages.setFilter({
+      "email": { $regex: keyword },
+      role: "Admin"
+    }
+    )
+  }
+  if ((isAdmin === "Admin") && !keyword) {
+    usePages.setFilter({
+      role: "Admin"
+    }
+    )
+  }
+  if ((isAdmin !== "Admin") && keyword) {
+    usePages.setFilter({ "email": { $regex: keyword } })
+  }
+  if ((isAdmin !== "Admin") && !keyword) {
+    usePages.setFilter({})
+  }
   usePages.setPages(page)
   try {
     await client.connect();
     const userCollection = client.db("pro-man").collection("user");
-    const data = await userCollection.find({}).toArray();
+    const data = await userCollection.find(usePages.filter).toArray();
     const totalItemsNumber = data.length;
     const num_pages = Math.ceil(totalItemsNumber / limit);
     if (usePages.pages > num_pages) {
@@ -30,7 +53,8 @@ const getUsers = async (req, res) => {
       "list": items,
       "num_pages": num_pages,
       "page": parseInt(usePages.pages),
-      "limit": parseInt(limit)
+      "limit": parseInt(limit),
+      "isAdmin": isAdmin
     }
     )
   } catch (err) {
