@@ -86,20 +86,19 @@ const getMembersWorkspaces = async (req, res) => {
     try {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
-        console.log(memberEmail);
+        // console.log(memberEmail);
         const result = await workspaceCollection.find().toArray()
         if (result) {
             result.map(user => {
                 const filter2 = user?.members?.find(e => {
                     if (e === memberEmail) {
-                        // console.log(user);
                         memberArray.members?.push(user);
                     }
                 })
             })
         }
-        console.log(memberArray.members)
-        res.send("Run success....")
+        // console.log(memberArray.members)
+        res.send(memberArray.members)
     }
     catch (err) {
         console.error(err);

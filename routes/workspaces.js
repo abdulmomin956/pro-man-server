@@ -6,7 +6,7 @@ const workspaceController = require('../controllers/workspaceController')
 router.route('/')
     .post(workspaceController.addWorkspace)
 
-router.route('/:memberEmail')
+router.route('/memberEmail/:memberEmail')
     .get(workspaceController.getMembersWorkspaces)
 
 router.route('/:email')
