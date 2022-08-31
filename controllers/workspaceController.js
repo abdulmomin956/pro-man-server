@@ -89,6 +89,7 @@ const getMembersWorkspaces = async (req, res) => {
         // console.log(memberEmail);
         const result = await workspaceCollection.find().toArray()
         if (result) {
+            memberArray.members = []
             result.map(user => {
                 const filter2 = user?.members?.find(e => {
                     if (e === memberEmail) {
@@ -97,7 +98,7 @@ const getMembersWorkspaces = async (req, res) => {
                 })
             })
         }
-        // console.log(memberArray.members)
+        console.log(memberArray.members)
         res.send(memberArray.members)
     }
     catch (err) {
