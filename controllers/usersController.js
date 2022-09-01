@@ -122,4 +122,18 @@ const makeAdmin = async (req, res) => {
 
 };
 
-module.exports = { getUsers, allUsers, addUser, makeAdmin };
+const singleUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await client.connect();
+    const userCollection = client.db("pro-man").collection("user");
+    const result = await userCollection.findOne({ _id: ObjectId(id) });
+    res.status(200).json(result)
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
+
+}
+
+module.exports = { getUsers, allUsers, addUser, makeAdmin, singleUser };

@@ -10,6 +10,7 @@ router.route("/pagination")
     .post(usersController.getUsers)
 
 router.route("/:id")
+    .get(usersController.singleUser)
     .put(usersController.makeAdmin)
 
 module.exports = router;

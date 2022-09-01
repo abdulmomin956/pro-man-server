@@ -22,9 +22,7 @@ const handleAuth = async (req, res) => {
             try {
                 await client.connect();
                 const userCollection = client.db("pro-man").collection("user");
-                console.log(email);
                 const result = await userCollection.findOne(email)
-                console.log(result);
                 res.send(result)
             }
             catch (err) {

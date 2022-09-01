@@ -24,7 +24,7 @@ const addList = async (req, res) => {
 
 const getAllLists = async (req, res) => {
   const { boardID } = req.params;
-  console.log(boardID);
+  // console.log(boardID);
   try {
     await client.connect();
     const listCollection = client.db("pro-man").collection("list");
@@ -39,7 +39,7 @@ const getAllLists = async (req, res) => {
 
 const getLists = async (req, res) => {
   const { boardID } = req.params;
-  console.log(boardID);
+  // console.log(boardID);
   try {
     await client.connect();
     const listCollection = client.db("pro-man").collection("list");

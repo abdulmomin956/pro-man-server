@@ -98,7 +98,7 @@ const getMembersWorkspaces = async (req, res) => {
                 })
             })
         }
-        console.log(memberArray.members)
+        // console.log(memberArray.members)
         res.send(memberArray.members)
     }
     catch (err) {

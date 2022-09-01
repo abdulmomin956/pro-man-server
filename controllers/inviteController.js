@@ -28,7 +28,7 @@ const handleVerifyToken = async (req, res) => {
     const { email, workspaceId } = decoded;
     // console.log("email => ", email, ", userEmail => ", userEmail);
     if (userEmail == email) {
-      console.log(decoded);
+      // console.log(decoded);
       res.send(decoded);
 
     } else {
@@ -52,12 +52,12 @@ const handleUpdateMember = async (req, res) => {
     const workspaceCollection = client.db("pro-man").collection("workspace");
 
     const { workspaceId, email } = req.body;
-    console.log(workspaceId);
+    // console.log(workspaceId);
     const workspace = await workspaceCollection.findOne({ _id: ObjectId(workspaceId) })
-    console.log(workspace);
+    // console.log(workspace);
     if (!workspace?.members) {
       memberArray.setMembers([])
-      console.log(memberArray.members);
+      // console.log(memberArray.members);
     } else {
       memberArray.setMembers(workspace.members);
     }
@@ -75,7 +75,7 @@ const handleUpdateMember = async (req, res) => {
       };
       const result = await workspaceCollection.updateOne(filter, updateDoc, option);
 
-      console.log("Success.....", result);
+      // console.log("Success.....", result);
       res.send(result);
     }
   }

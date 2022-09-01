@@ -79,7 +79,7 @@ const deleteCard = async (req, res) => {
         await client.connect()
         const cardCollection = client.db("pro-man").collection("card");
         const id = req.params.id;
-        console.log(id)
+        // console.log(id)
         const filter = { _id: ObjectId(id) }
         const result = await cardCollection.deleteOne(filter)
         res.send(result)
