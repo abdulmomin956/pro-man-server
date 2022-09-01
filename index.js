@@ -4,7 +4,7 @@ const http = require("http");
 var cookieParser = require("cookie-parser");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 //routes for messenger api
 const conversationRoute = require("./routes/conversations");
@@ -38,6 +38,9 @@ app.use("/users", require("./routes/users"));
 app.use("/workspace", require("./routes/workspaces"));
 app.use("/sworkspace", require("./routes/sworkspace"));
 
+// templates routes
+app.use("/template", require("./routes/template"));
+
 // board routes
 app.use("/board", require("./routes/board"));
 
@@ -56,13 +59,10 @@ app.use("/profile", require("./routes/profile"));
 // Invite Workspace member
 app.use("/invite", require("./routes/invite"));
 
-
 //api for messenger api
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 
-
-
 server.listen(port, () => {
   console.log("server is running");
-})
+});
