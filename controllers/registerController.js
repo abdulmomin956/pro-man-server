@@ -4,7 +4,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const jwt = require('jsonwebtoken');
 
 const handleRegister = async (req, res) => {
-    const data = req.body;
+    const userDB = req.body;
     const { email } = req.body;
     if (!email) return res.status(400).json({ 'message': 'Email is required.' });
     // console.log(email);
@@ -13,28 +13,27 @@ const handleRegister = async (req, res) => {
         const userCollection = client.db("pro-man").collection("user");
 
         const filter = { email: email };
-        const options = { upsert: true };
-        const result = await userCollection.updateOne(filter, { $set: data }, options)
-
-        if (result.matchedCount === 1) {
+        const result = await userCollection.findOne(filter)
+        // console.log(result);
+        if (result) {
             return res.status(409).json({ 'message': 'This email is already exited' });
         }
         else {
             // create JWTs
             const accessToken = jwt.sign(
-                { "email": usersDB[0].email },
+                { "email": email },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '30s' }
-            );
-            const refreshToken = jwt.sign(
-                { "email": usersDB[0].email },
-                process.env.REFRESH_TOKEN_SECRET,
                 { expiresIn: '1d' }
             );
+            const refreshToken = jwt.sign(
+                { "email": email },
+                process.env.REFRESH_TOKEN_SECRET,
+                { expiresIn: '2d' }
+            );
 
-            // await userCollection.updateOne({ email: email }, { $set: { refreshToken: refreshToken } })
-            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
-            res.status(201).json({ accessToken, ttl: 24 * 60 * 60 * 1000 });
+            await userCollection.insertOne(userDB)
+            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 2 * 24 * 60 * 60 * 1000 });
+            res.status(201).json({ userDB, accessToken, ttl: 24 * 60 * 60 * 1000 });
         }
     }
     catch (err) {
