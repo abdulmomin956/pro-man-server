@@ -2,6 +2,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+const Conversation = require("../models/Conversation");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -47,12 +48,10 @@ const memberArray = {
   }
 };
 const handleUpdateMember = async (req, res) => {
+  const { workspaceId, email } = req.body;
   try {
     await client.connect()
     const workspaceCollection = client.db("pro-man").collection("workspace");
-
-    const { workspaceId, email } = req.body;
-    // console.log(workspaceId);
     const workspace = await workspaceCollection.findOne({ _id: ObjectId(workspaceId) })
     // console.log(workspace);
     if (!workspace?.members) {
@@ -66,16 +65,21 @@ const handleUpdateMember = async (req, res) => {
     if (check) {
       return res.status(409).send({ message: 'User already added.' });
     } else {
-      memberArray.members?.push(email);
+      // memberArray.members?.push(email);
+      memberArray.setMembers([...memberArray.members, email])
 
-      const option = { upsert: true };
       const filter = { _id: ObjectId(workspaceId) };
       const updateDoc = {
         $set: { members: memberArray.members },
       };
-      const result = await workspaceCollection.updateOne(filter, updateDoc, option);
 
-      // console.log("Success.....", result);
+      await client.db("pro-man").collection("workspace").updateOne({ workspaceId }, { $push: { members: email } })
+
+      const workspaceCollection = client.db("social").collection("conversations");
+      await workspaceCollection.updateOne({ nameId: [workspaceId] }, {
+        $push: { members: userId },
+      });
+      const result = await workspaceCollection.updateOne(filter, updateDoc);
       res.send(result);
     }
   }

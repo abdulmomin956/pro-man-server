@@ -83,5 +83,16 @@ const deleteWorkspace = async (req, res) => {
     }
 }
 
+const getWorkspaceById = async (req, res) => {
+    try {
+        await client.connect()
+        const workspaceCollection = client.db("pro-man").collection("workspace");
+        const result = await workspaceCollection.findOne({ _id: ObjectId(req.params.id) })
+        res.send(result)
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
 
-module.exports = { getWorkspace, updateWorkspace, deleteWorkspace }
+
+module.exports = { getWorkspace, updateWorkspace, deleteWorkspace, getWorkspaceById }

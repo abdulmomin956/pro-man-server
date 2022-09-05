@@ -9,6 +9,9 @@ router.route("/all")
 router.route("/pagination")
     .post(usersController.getUsers)
 
+router.route("/chat")
+    .post(usersController.getChatUser)
+
 router.route("/:id")
     .get(usersController.singleUser)
     .put(usersController.makeAdmin)

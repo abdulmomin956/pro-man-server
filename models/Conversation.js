@@ -2,9 +2,16 @@ const mongoose = require("mongoose");
 
 const ConversationSchema = new mongoose.Schema(
     {
-        members: {
+        type: {
+            type: String,
+        },
+        nameId: {
             type: Array,
         },
+        members: {
+            type: Array,
+        }
+
     },
     { timestamps: true }
 );

@@ -77,6 +77,32 @@ const allUsers = async (req, res) => {
   }
 }
 
+const request = {
+  filter: [],
+  setFilter: function (data) { this.filter = data }
+}
+
+const getChatUser = async (req, res) => {
+  const body = req.body;
+  // console.log(body);
+  const check = body.map(obj => ObjectId(obj.sender))
+  // console.log(check);
+  request.setFilter(check)
+  // console.log(request.filter);
+  try {
+    await client.connect();
+    const userCollection = client.db("pro-man").collection("user");
+    const result = await userCollection.find({
+      "_id": {
+        "$in": request.filter
+      }
+    }).toArray()
+    res.send(result)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 const addUser = async (req, res) => {
   try {
     await client.connect();
@@ -136,4 +162,4 @@ const singleUser = async (req, res) => {
 
 }
 
-module.exports = { getUsers, allUsers, addUser, makeAdmin, singleUser };
+module.exports = { getUsers, allUsers, addUser, makeAdmin, singleUser, getChatUser };
