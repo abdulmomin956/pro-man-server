@@ -96,17 +96,18 @@ const memberArray = {
     }
 };
 const getMembersWorkspaces = async (req, res) => {
-    const { memberEmail } = req.params;
+    const { userId } = req.params;
+    console.log(userId);
     try {
         await client.connect()
         const workspaceCollection = client.db("pro-man").collection("workspace");
-        // console.log(memberEmail);
+        // console.log(userId);
         const result = await workspaceCollection.find().toArray()
         if (result) {
             memberArray.members = []
             result.map(user => {
                 const filter2 = user?.members?.find(e => {
-                    if (e === memberEmail) {
+                    if (e === userId) {
                         memberArray.members?.push(user);
                     }
                 })

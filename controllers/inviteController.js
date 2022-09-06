@@ -48,7 +48,8 @@ const memberArray = {
   }
 };
 const handleUpdateMember = async (req, res) => {
-  const { workspaceId, email } = req.body;
+  const { workspaceId, email, userId } = req.body;
+  // console.log(userId);
   try {
     await client.connect()
     const workspaceCollection = client.db("pro-man").collection("workspace");
@@ -61,22 +62,24 @@ const handleUpdateMember = async (req, res) => {
       memberArray.setMembers(workspace.members);
     }
 
-    const check = memberArray.members?.find(e => e === email);
+    const check = memberArray.members?.find(e => e === userId);
     if (check) {
       return res.status(409).send({ message: 'User already added.' });
     } else {
       // memberArray.members?.push(email);
-      memberArray.setMembers([...memberArray.members, email])
+      // const user = { userId: userId, email: email }
+      // console.log(user)
+      memberArray.setMembers([...memberArray.members, userId])
 
       const filter = { _id: ObjectId(workspaceId) };
       const updateDoc = {
         $set: { members: memberArray.members },
       };
 
-      await client.db("pro-man").collection("workspace").updateOne({ workspaceId }, { $push: { members: email } })
+      // await client.db("pro-man").collection("workspace").updateOne({ workspaceId }, { $push: { members: email } })
 
-      const workspaceCollection = client.db("social").collection("conversations");
-      await workspaceCollection.updateOne({ nameId: [workspaceId] }, {
+      const conversationCollection = client.db("social").collection("conversations");
+      await conversationCollection.updateOne({ nameId: [workspaceId] }, {
         $push: { members: userId },
       });
       const result = await workspaceCollection.updateOne(filter, updateDoc);
