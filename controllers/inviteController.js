@@ -48,7 +48,7 @@ const memberArray = {
   }
 };
 const handleUpdateMember = async (req, res) => {
-  const { workspaceId, email, userId } = req.body;
+  const { workspaceId, userId } = req.body;
   // console.log(userId);
   try {
     await client.connect()
@@ -63,12 +63,10 @@ const handleUpdateMember = async (req, res) => {
     }
 
     const check = memberArray.members?.find(e => e === userId);
+    // console.log(check);
     if (check) {
       return res.status(409).send({ message: 'User already added.' });
     } else {
-      // memberArray.members?.push(email);
-      // const user = { userId: userId, email: email }
-      // console.log(user)
       memberArray.setMembers([...memberArray.members, userId])
 
       const filter = { _id: ObjectId(workspaceId) };
