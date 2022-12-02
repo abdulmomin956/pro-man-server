@@ -5,6 +5,17 @@ var cookieParser = require("cookie-parser");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const https = require('https');
+const fs = require('fs');
+
+const key = fs.readFileSync('private.key')
+const cert = fs.readFileSync('certificate.crt')
+const cred = {
+  key,
+  cert
+}
+
+httpsServer = https.createServer(cred, app)
 
 //routes for messenger api
 const conversationRoute = require("./routes/conversations");
@@ -63,6 +74,11 @@ app.use("/invite", require("./routes/invite"));
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 
+
+
+
 server.listen(port, () => {
   console.log("server is running");
 });
+
+httpsServer.listen(8443)
