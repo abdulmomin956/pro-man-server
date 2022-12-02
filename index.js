@@ -15,7 +15,7 @@ const cred = {
   cert
 }
 
-httpsServer = https.createServer(cred, app)
+
 
 //routes for messenger api
 const conversationRoute = require("./routes/conversations");
@@ -80,5 +80,5 @@ app.use("/api/messages", messageRoute);
 server.listen(port, () => {
   console.log("server is running");
 });
-
+httpsServer = https.createServer(cred, app)
 httpsServer.listen(8443)
