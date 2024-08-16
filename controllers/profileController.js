@@ -1,6 +1,6 @@
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.js40z.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const addProfile = async (req, res) => {
@@ -40,9 +40,9 @@ const getProfiles = async (req, res) => {
 const getProfile = async (req, res) => {
     try {
         await client.connect()
-       
+
         const profileCollection = client.db("pro-man").collection("profile");
-         const email = req.params.email;
+        const email = req.params.email;
         const filter = { email: email };
         const result = await profileCollection.findOne(filter)
         res.send(result)
