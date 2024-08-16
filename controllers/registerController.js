@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ztan.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.js40z.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 const jwt = require('jsonwebtoken');
 
@@ -7,7 +7,7 @@ const handleRegister = async (req, res) => {
     const userDB = req.body;
     const { email } = req.body;
     if (!email) return res.status(400).json({ 'message': 'Email is required.' });
-    // console.log(email);
+    console.log(email);
     try {
         await client.connect()
         const userCollection = client.db("pro-man").collection("user");
